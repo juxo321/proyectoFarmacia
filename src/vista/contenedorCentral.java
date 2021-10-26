@@ -113,9 +113,8 @@ public class contenedorCentral extends SplitPane {
 
 
     //Tab VerVentas
-    TableView tablaVentas;
-    //VentaHelper tabVentaHelper = new VentaHelper();
-    //List<VentaEntity> listaTabVentas = new ArrayList<>();
+
+
 
     //Tab clientes
 
@@ -255,7 +254,6 @@ public class contenedorCentral extends SplitPane {
 
     public void componentesContenedorDerecho(){
 
-
           tabComprarProductos tabComprarProductos = new tabComprarProductos("Comprar Productos", areaComprarProductos, contenedorDerecho.getPrefWidth(), contenedorDerecho.getTabMaxHeight());
           tabComprarProductos.componentesTabComprarProductos();
 
@@ -270,12 +268,12 @@ public class contenedorCentral extends SplitPane {
 
           tabCorteCaja tabCorteCaja = new tabCorteCaja("Corte caja", areaCorteCaja, contenedorDerecho.getPrefWidth(), contenedorDerecho.getTabMaxHeight());
           tabCorteCaja.componentesTabCorteCaja(botonCorteCaja);
-//        componentesTabComprasRealizadas();
-//        componentesTabVentas();
-//        componentesTabVentasRealizadas();
-//        componentesTabCliente();
-//        componentesTabProductos();
-//        componentesTabCorteCaja();
+
+          tabComprasRealizadas tabComprasRealizadas = new tabComprasRealizadas("Compras realizadas", areaCompras, contenedorDerecho.getPrefWidth(), contenedorDerecho.getTabMaxHeight());
+          tabComprasRealizadas.componentesTabComprasRealizadas();
+
+          tabVentasRealizadas tabVentasRealizadas = new tabVentasRealizadas("Ventas realizadas", areaVentas, contenedorDerecho.getPrefWidth(), contenedorDerecho.getTabMaxHeight());
+          tabVentasRealizadas.componentesTabVentasRealizadas();
 
 
         botonComprarProductos.setOnAction(event -> {
@@ -290,8 +288,8 @@ public class contenedorCentral extends SplitPane {
             }
         });
         botonCompras.setOnAction(event -> {
-            if(!contenedorDerecho.getTabs().contains(tabCompras)){
-                contenedorDerecho.getTabs().add(tabCompras);
+            if(!contenedorDerecho.getTabs().contains(tabComprasRealizadas)){
+                contenedorDerecho.getTabs().add(tabComprasRealizadas);
 
             }else{
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -313,8 +311,8 @@ public class contenedorCentral extends SplitPane {
             }
         });
         botonVentas.setOnAction(event -> {
-            if(!contenedorDerecho.getTabs().contains(tabVentas)){
-                contenedorDerecho.getTabs().add(tabVentas);
+            if(!contenedorDerecho.getTabs().contains(tabVentasRealizadas)){
+                contenedorDerecho.getTabs().add(tabVentasRealizadas);
             }else{
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Pestaña");
@@ -367,86 +365,5 @@ public class contenedorCentral extends SplitPane {
         tabCliente.setStyle("-fx-background-color: #" + "51c4d3");
         tabProductosStock.setStyle("-fx-background-color: #" + "51c4d3");
         tabCorteCaja.setStyle("-fx-background-color: #" + "51c4d3");
-
-
     }
-
-    //dfggdfgfgdfgfg
-
-
-
-    /*
-    public void  componentesTabVentasRealizadas(){
-        areaVentas.setPrefSize(contenedorDerecho.getPrefWidth(), contenedorDerecho.getPrefHeight());
-
-        VBox contenedorTablaFormulario = new VBox();
-        contenedorTablaFormulario.setPrefSize(960, contenedorDerecho.getPrefHeight());
-        HBox contenedorTablaComboBox = new HBox();
-        contenedorTablaComboBox.setSpacing(20);
-        VBox contenedorLabelComboBox = new VBox();
-        contenedorLabelComboBox.setSpacing(10);
-        contenedorTablaFormulario.setPadding(new Insets(20,20,20,20));
-
-        tablaVentas = new TableView();
-        tablaVentas.setPrefSize(730, 400);
-
-
-        Label labelFecha = new Label("Mostras por Fecha:");
-        labelFecha.setFont(Font.font("Arial", 16));
-        labelFecha.setStyle("-fx-font-weight: bold");
-
-        Label labelTodasVentas = new Label("Mostrar todas las ventas:");
-        labelTodasVentas.setFont(Font.font("Arial", 16));
-        labelTodasVentas.setStyle("-fx-font-weight: bold");
-        Button botonTodasVentas  = new Button("Mostrar");
-
-        DatePicker datePickerFecha = new DatePicker();
-
-        datePickerFecha.setOnAction(event -> {
-            String date = datePickerFecha.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            java.util.Date date2 = null;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            try {
-                date2 = sdf.parse(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            java.sql.Date fechaBuscar = new Date(date2.getTime());
-
-            listaTabVentas = tabVentaHelper.listaVentasPorFecha(fechaBuscar);
-            tablaVentas.setItems(FXCollections.observableArrayList(listaTabVentas));
-        });
-
-        botonTodasVentas.setOnAction(event -> {
-            listaTabVentas = tabVentaHelper.listaVentas();
-            tablaVentas.setItems(FXCollections.observableArrayList(listaTabVentas));
-        });
-
-        TableColumn<VentaEntity, Integer> columnaNoVenta = new TableColumn<>("No.Venta");
-        columnaNoVenta.setCellValueFactory(new PropertyValueFactory<>("noVenta"));
-        columnaNoVenta.setPrefWidth(200);
-
-        TableColumn<VentaEntity, Integer> columnaCantidad = new TableColumn<>("Cantidad");
-        columnaCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        columnaCantidad.setPrefWidth(150);
-
-        TableColumn<VentaEntity, Date> columnaFecha = new TableColumn<>("Fecha");
-        columnaFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        columnaFecha.setPrefWidth(150);
-
-        TableColumn<VentaEntity, Double> columnaTotal = new TableColumn<>("Total");
-        columnaTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
-        columnaTotal.setPrefWidth(150);
-
-
-        tablaVentas.getColumns().addAll(columnaNoVenta,columnaCantidad,columnaFecha,columnaTotal);
-
-
-        contenedorLabelComboBox.getChildren().addAll(labelFecha, datePickerFecha, labelTodasVentas,botonTodasVentas);
-        contenedorTablaComboBox.getChildren().addAll(tablaVentas, contenedorLabelComboBox);
-        contenedorTablaFormulario.getChildren().addAll(contenedorTablaComboBox);
-        areaVentas.getChildren().addAll(contenedorTablaFormulario);
-    }
-
-    */
 }

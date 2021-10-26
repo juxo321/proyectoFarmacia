@@ -1,5 +1,6 @@
 package modelo;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface VentaDAO {
@@ -13,6 +14,7 @@ public interface VentaDAO {
 
     public boolean delete(Venta venta) throws Exception;
 
-
     public int recuperarUltimaVenta() throws Exception;
+
+    public List<Venta> listaVentasPorFecha(Date fechaBuscar) throws Exception;
 }

@@ -91,4 +91,33 @@ public class VentaDAOImplement implements VentaDAO{
             throw new Exception("Error en readAll Exception " + e.getMessage());
         }
     }
+
+    @Override
+    public List<Venta> listaVentasPorFecha(Date fechaBuscar) throws Exception {
+        Statement stm;
+        ResultSet ventas;
+        String sql = "select * from venta where fecha ='" + fechaBuscar+ "'";
+        List<Venta> listaVentas = new ArrayList<Venta>();
+
+        ConexionBD conn = new ConexionBD();
+        try (Connection conexion = conn.getConnection();){
+            stm = conexion.createStatement();
+            ventas = stm.executeQuery(sql);
+            while (ventas.next()){
+                int noVenta = ventas.getInt("noVenta");
+                int noUsuario = ventas.getInt("noUsuario");
+                int cantidad = ventas.getInt("cantidad");
+                Date fecha = ventas.getDate("fecha");
+                double total = ventas.getDouble("total");
+                Venta venta = new Venta(noVenta, cantidad,fecha ,total);
+                listaVentas.add(venta);
+            }
+            return listaVentas;
+        }
+        catch (SQLException e) {
+            throw new Exception("Error en readAll SQLException " + e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Error en readAll Exception " + e.getMessage());
+        }
+    }
 }

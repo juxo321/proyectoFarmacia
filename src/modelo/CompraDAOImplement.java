@@ -1,6 +1,7 @@
 package modelo;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CompraDAOImplement implements CompraDAO{
@@ -25,7 +26,31 @@ public class CompraDAOImplement implements CompraDAO{
 
     @Override
     public List<Compra> listaCompras() throws Exception {
-        return null;
+        Statement stm;
+        ResultSet compras;
+        String sql = "select * from compra";
+        List<Compra> listaCompras = new ArrayList<Compra>();
+
+        ConexionBD conn = new ConexionBD();
+        try (Connection conexion = conn.getConnection();){
+            stm = conexion.createStatement();
+            compras = stm.executeQuery(sql);
+            while (compras.next()){
+                int noProducto = compras.getInt("noCompra");
+                int noUsuario = compras.getInt("noUsuario");
+                int cantidad = compras.getInt("cantidad");
+                Date fecha = compras.getDate("fecha");
+                double total = compras.getDouble("total");
+                Compra compra = new Compra(noProducto, cantidad,fecha ,total);
+                listaCompras.add(compra);
+            }
+            return listaCompras;
+        }
+        catch (SQLException e) {
+            throw new Exception("Error en readAll SQLException " + e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Error en readAll Exception " + e.getMessage());
+        }
     }
 
     @Override
@@ -69,6 +94,30 @@ public class CompraDAOImplement implements CompraDAO{
 
     @Override
     public List<Compra> listaComprasPorFecha(Date fechaBuscar) throws Exception {
-        return null;
+        Statement stm;
+        ResultSet compras;
+        String sql = "select * from compra where fecha ='" + fechaBuscar+ "'";
+        List<Compra> listaCompras = new ArrayList<Compra>();
+
+        ConexionBD conn = new ConexionBD();
+        try (Connection conexion = conn.getConnection();){
+            stm = conexion.createStatement();
+            compras = stm.executeQuery(sql);
+            while (compras.next()){
+                int noCompra = compras.getInt("noCompra");
+                int noUsuario = compras.getInt("noUsuario");
+                int cantidad = compras.getInt("cantidad");
+                Date fecha = compras.getDate("fecha");
+                double total = compras.getDouble("total");
+                Compra compra = new Compra(noCompra, cantidad,fecha ,total);
+                listaCompras.add(compra);
+            }
+            return listaCompras;
+        }
+        catch (SQLException e) {
+            throw new Exception("Error en readAll SQLException " + e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Error en readAll Exception " + e.getMessage());
+        }
     }
 }

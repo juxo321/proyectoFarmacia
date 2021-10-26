@@ -2,6 +2,7 @@ package vista;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -28,6 +29,13 @@ public class tabComprasRealizadas extends Tab {
     TableView tablaCompras;
     CompraDAO compraDAO = new CompraDAOImplement();
     List<Compra> listaTabCompras = new ArrayList<>();
+
+    public tabComprasRealizadas(String text, AnchorPane areaCompras, double ancho, double alto) {
+        super(text, areaCompras);
+        this.areaCompras = areaCompras;
+        this.ancho = ancho;
+        this.alto = alto;
+    }
 
     public void  componentesTabComprasRealizadas(){
         areaCompras.setPrefSize(ancho, alto);
