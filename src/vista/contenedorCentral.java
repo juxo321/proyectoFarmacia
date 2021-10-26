@@ -41,7 +41,6 @@ public class contenedorCentral extends SplitPane {
 
     AnchorPane contenedorIzquierdo = new AnchorPane();
     TabPane contenedorDerecho = new TabPane();
-
     ToolBar barraHerramientas = new ToolBar();
 
     //Botones toolbar
@@ -68,63 +67,6 @@ public class contenedorCentral extends SplitPane {
     AnchorPane areaListaClientes = new AnchorPane();
     AnchorPane areaProductosStock = new AnchorPane();
     AnchorPane areaCorteCaja = new AnchorPane();
-
-    //Tab tabComprarProductos = new Tab("Comprar Productos", areaComprarProductos);
-    Tab tabCompras = new Tab("Compras", areaCompras);
-    Tab tabVenderProductos = new Tab("Vender Productos", areaVenderProductos);
-    Tab tabVentas = new Tab("Ventas", areaVentas);
-    //Tab tabListaClientes = new Tab("Lista de clientes", areaListaClientes);
-    //Tab tabProductosStock = new Tab("Productos en stock", areaProductosStock);
-    Tab tabCorteCaja = new Tab("Corte de caja", areaCorteCaja);
-
-    //TabCompra
-
-    double totalCompra;
-    int cantidad;
-
-    //ProductoHelper productoHelper = new ProductoHelper();
-    //CompraHelper compraHelper = new CompraHelper();
-    //ProductoCompraHelper productoCompraHelper = new ProductoCompraHelper();
-
-
-    TableView tablaComprarProductos;
-    TableView tabladetallesComprarProductos;
-
-    //ProductoEntity productoAgregar = new ProductoEntity();
-    //List<ProductocompraEntity> listaProductosComprados = new ArrayList<>();
-
-    //ProductocompraEntity productoCompra = new ProductocompraEntity();
-    int indexProductoComprado=0;
-
-    //CompraEntity compraActual = new CompraEntity();
-    //List<CompraEntity> listaCompras = new ArrayList<>();
-
-    int contadorCompra=1;
-    int contadorId=1;
-
-    Calendar cal = new GregorianCalendar();
-    Date fechaActual = new java.sql.Date(cal.getTime().getTime());
-
-
-    //Tab VerCompras
-
-
-    //Tab generar ventas
-
-
-    //Tab VerVentas
-
-
-
-    //Tab clientes
-
-
-    //Tab productosStock
-
-
-    //Tab Corte de caja
-    TableView tablaCorteCaja;
-    //List<CompraEntity> listaCorteCaja = new ArrayList<>();
 
     contenedorCentral() {
         //this.usuarioLogeado = usuarioLogeado;
@@ -275,7 +217,6 @@ public class contenedorCentral extends SplitPane {
           tabVentasRealizadas tabVentasRealizadas = new tabVentasRealizadas("Ventas realizadas", areaVentas, contenedorDerecho.getPrefWidth(), contenedorDerecho.getTabMaxHeight());
           tabVentasRealizadas.componentesTabVentasRealizadas();
 
-
         botonComprarProductos.setOnAction(event -> {
             if(!contenedorDerecho.getTabs().contains(tabComprarProductos)){
                 contenedorDerecho.getTabs().add(tabComprarProductos);
@@ -359,9 +300,9 @@ public class contenedorCentral extends SplitPane {
         contenedorDerecho.setStyle("-fx-background-color: #" + "deedf0");
 
         tabComprarProductos.setStyle("-fx-background-color: #" + "51c4d3");
-        tabCompras.setStyle("-fx-background-color: #" + "51c4d3");
+        tabComprasRealizadas.setStyle("-fx-background-color: #" + "51c4d3");
         tabVenderProductos.setStyle("-fx-background-color: #" + "51c4d3");
-        tabVentas.setStyle("-fx-background-color: #" + "51c4d3");
+        tabVentasRealizadas.setStyle("-fx-background-color: #" + "51c4d3");
         tabCliente.setStyle("-fx-background-color: #" + "51c4d3");
         tabProductosStock.setStyle("-fx-background-color: #" + "51c4d3");
         tabCorteCaja.setStyle("-fx-background-color: #" + "51c4d3");
