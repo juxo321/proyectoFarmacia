@@ -29,7 +29,8 @@ public class tabComprarProductos extends Tab {
     TableView<Producto> tablaComprarProductos;
     TableView<ProductoCompra> tabladetallesComprarProductos;
 
-    public Button botonagregar;
+    Button botonagregar;
+    Button botoneliminar;
     Button botonConfirmarCompra;
 
     Calendar cal = new GregorianCalendar();
@@ -77,6 +78,8 @@ public class tabComprarProductos extends Tab {
 
         botonagregar = new Button("Agregar");
         botonConfirmarCompra = new Button("Confirmar compra");
+        botoneliminar = new Button("Eliminar");
+
 
 
         //compraActual=construirCompra(compraActual);
@@ -137,22 +140,7 @@ public class tabComprarProductos extends Tab {
         columnaNoProvedor.setCellValueFactory(new PropertyValueFactory<>("noProvedor"));
         columnaNoProvedor.setPrefWidth(110);
 
-        TableView.TableViewSelectionModel<Producto> modeloSeleccion = tablaComprarProductos.getSelectionModel();
-        modeloSeleccion.setSelectionMode(SelectionMode.SINGLE);
-
-        ObservableList<Producto> productoSeleccionado = modeloSeleccion.getSelectedItems();
-
-        tablaComprarProductos.getColumns().addAll(columnaNoProducto, columnaNombreProducto, columnaCantidad, columnaTipo,columnaPrecio);
-
-        comboBoxProvedor.setOnAction(event -> {
-            try {
-                listaProductos = productoDAO.obtenerProductos(Integer.parseInt(comboBoxProvedor.getSelectionModel().getSelectedItem()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            tablaComprarProductos.setItems(FXCollections.observableArrayList(listaProductos));
-        });
-
+        //SEGUNDA TABLA
         contenedorBotonesAgregarCancelar.setAlignment(Pos.CENTER_RIGHT);
         contenedorBotonesAgregarCancelar.setPadding(new Insets(10,10,10,10));
         contenedorBotonesAgregarCancelar.setSpacing(10);
@@ -180,6 +168,31 @@ public class tabComprarProductos extends Tab {
         tabladetallesComprarProductos.getColumns().addAll(columnaCantidad2, columnaProducto2, columnaPrecioUnitario2, columnaTotal2);
 
 
+        //Modelo de selección para la primera tabla
+        TableView.TableViewSelectionModel<Producto> modeloSeleccion = tablaComprarProductos.getSelectionModel();
+        modeloSeleccion.setSelectionMode(SelectionMode.SINGLE);
+
+        ObservableList<Producto> productoSeleccionado = modeloSeleccion.getSelectedItems();
+
+
+        //Modelo de selección para la segunda tabla
+
+        TableView.TableViewSelectionModel<ProductoCompra> modeloSeleccion2 = tabladetallesComprarProductos.getSelectionModel();
+        modeloSeleccion2.setSelectionMode(SelectionMode.SINGLE);
+
+        ObservableList<ProductoCompra> productoSeleccionado2 = modeloSeleccion2.getSelectedItems();
+
+        tablaComprarProductos.getColumns().addAll(columnaNoProducto, columnaNombreProducto, columnaCantidad, columnaTipo,columnaPrecio);
+
+        comboBoxProvedor.setOnAction(event -> {
+            try {
+                listaProductos = productoDAO.obtenerProductos(Integer.parseInt(comboBoxProvedor.getSelectionModel().getSelectedItem()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            tablaComprarProductos.setItems(FXCollections.observableArrayList(listaProductos));
+        });
+
         botonagregar.setOnAction(event  -> {
             productoCompra = construirProductoCompra(productoSeleccionado.get(0));
             productoStock = construirProductoStock(productoSeleccionado.get(0));
@@ -189,8 +202,8 @@ public class tabComprarProductos extends Tab {
                     listaProductosStock.get(indexProductoComprado).setCantidad(listaProductosStock.get(indexProductoComprado).getCantidad()+1);
                     listaProductosComprados.get(indexProductoComprado).setCantidad(listaProductosComprados.get(indexProductoComprado).getCantidad()+1);
                     productoSeleccionado.get(0).setCantidad(productoSeleccionado.get(0).getCantidad()-1);
-                    tablaComprarProductos.refresh();
                     listaProductosComprados.get(indexProductoComprado).setTotal(productoSeleccionado.get(0).getPrecio()*listaProductosComprados.get(indexProductoComprado).getCantidad());
+                    tablaComprarProductos.refresh();
                 }else{
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Cantidad insuficiente");
@@ -220,6 +233,50 @@ public class tabComprarProductos extends Tab {
                 tabladetallesComprarProductos.refresh();
             }
         });
+
+
+        botoneliminar.setOnAction(event -> {
+            if(!tabladetallesComprarProductos.getItems().isEmpty()){
+                int indexProductoComprado2 = productoEnLista(productoSeleccionado2.get(0));
+                if(productoSeleccionado2.get(0).getCantidad()>0){
+                    listaProductosStock.get(indexProductoComprado2).setCantidad(listaProductosStock.get(indexProductoComprado2).getCantidad()-1);
+                    listaProductosComprados.get(indexProductoComprado2).setCantidad(listaProductosComprados.get(indexProductoComprado2).getCantidad()-1);
+                    for(Producto producto : listaProductos){
+                        if(productoSeleccionado2.get(0).getNoProducto() == producto.getNoProducto()){
+                            producto.setCantidad(producto.getCantidad()+1);
+                        }
+                    }
+                    double precioProductoEliminar = precioProductoEliminar(productoSeleccionado2.get(0).getNoProducto());
+                    listaProductosComprados.get(indexProductoComprado2).setTotal(listaProductosComprados.get(indexProductoComprado2).getTotal()-precioProductoEliminar);
+                    if(productoSeleccionado2.get(0).getCantidad() == 0){
+                        listaProductosComprados.remove(indexProductoComprado2);
+                        tabladetallesComprarProductos.setItems(FXCollections.observableArrayList(listaProductosComprados));
+                    }
+                    tablaComprarProductos.refresh();
+                    tabladetallesComprarProductos.refresh();
+                }else{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Cantidad insuficiente");
+                    alert.setHeaderText(null);
+                    alert.setContentText("No hay suficientes productos para eliminar");
+                    alert.showAndWait();
+                }
+
+                totalCompra=0;
+                cantidad =0;
+
+
+                for (ProductoCompra producto : listaProductosComprados){
+                    totalCompra+=producto.getTotal();
+                    cantidad+=producto.getCantidad();
+                    textTotal.setText(String.valueOf(totalCompra));
+                    textCantidad.setText(String.valueOf(cantidad));
+                    tabladetallesComprarProductos.refresh();
+                }
+            }
+        });
+
+
 
         botonConfirmarCompra.setOnAction(event -> {
             Compra compra = new Compra();
@@ -280,7 +337,7 @@ public class tabComprarProductos extends Tab {
 
         areaDetallesCompra.getChildren().addAll(labelfecha, textFecha, labelCantidad, textCantidad, labelTotal, textTotal, botonConfirmarCompra);
         contenedorDetallesCompra.getChildren().addAll(tabladetallesComprarProductos, areaDetallesCompra);
-        contenedorBotonesAgregarCancelar.getChildren().addAll(botonagregar);
+        contenedorBotonesAgregarCancelar.getChildren().addAll(botoneliminar, botonagregar);
         contenedorLabelComboBox.getChildren().addAll(labelProvedor, comboBoxProvedor);
         contenedorTablaComboBox.getChildren().addAll(tablaComprarProductos, contenedorLabelComboBox);
         contenedorTablaFormulario.getChildren().addAll(contenedorTablaComboBox, contenedorBotonesAgregarCancelar, contenedorDetallesCompra);
@@ -289,6 +346,14 @@ public class tabComprarProductos extends Tab {
 
     }
 
+    private double precioProductoEliminar(int noProducto) {
+        for(Producto producto : listaProductos){
+            if(noProducto ==  producto.getNoProducto()){
+                return producto.getPrecio();
+            }
+        }
+        return -1;
+    }
 
     public ProductoCompra construirProductoCompra(Producto producto){
         ProductoCompra productoCompra = new ProductoCompra();
@@ -331,8 +396,6 @@ public class tabComprarProductos extends Tab {
         }
         return -1;
     }
-
-
 
 }
 
