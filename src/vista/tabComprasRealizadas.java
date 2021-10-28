@@ -94,7 +94,10 @@ public class tabComprasRealizadas extends Tab {
             try {
                 listaTabCompras = compraDAO.listaComprasPorFecha(fechaBuscar);
             } catch (Exception e) {
-                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de conexión");
+                alert.setContentText("Ooops, algo salió mal al conectarse con la base de datos!");
+                alert.showAndWait();
             }
             tablaCompras.setItems(FXCollections.observableArrayList(listaTabCompras));
             datePickerFecha.getEditor().setDisable(false);
@@ -105,7 +108,10 @@ public class tabComprasRealizadas extends Tab {
             try {
                 listaTabCompras = compraDAO.listaCompras();
             } catch (Exception e) {
-                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de conexión");
+                alert.setContentText("Ooops, algo salió mal al conectarse con la base de datos!");
+                alert.showAndWait();
             }
             tablaCompras.setItems(FXCollections.observableArrayList(listaTabCompras));
             datePickerFecha.getEditor().setDisable(true);

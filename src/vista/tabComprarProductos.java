@@ -80,6 +80,9 @@ public class tabComprarProductos extends Tab {
         botonConfirmarCompra = new Button("Confirmar compra");
         botoneliminar = new Button("Eliminar");
 
+        botonagregar.setDisable(true);
+        botoneliminar.setDisable(true);
+
 
 
         //compraActual=construirCompra(compraActual);
@@ -184,11 +187,19 @@ public class tabComprarProductos extends Tab {
 
         tablaComprarProductos.getColumns().addAll(columnaNoProducto, columnaNombreProducto, columnaCantidad, columnaTipo,columnaPrecio);
 
+
+        if(tabladetallesComprarProductos.getItems().isEmpty()){
+            botonConfirmarCompra.setDisable(true);
+        }
+
         comboBoxProvedor.setOnAction(event -> {
             try {
                 listaProductos = productoDAO.obtenerProductos(Integer.parseInt(comboBoxProvedor.getSelectionModel().getSelectedItem()));
             } catch (Exception e) {
-                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de conexión");
+                alert.setContentText("Ooops, algo salió mal al conectarse con la base de datos!");
+                alert.showAndWait();
             }
             tablaComprarProductos.setItems(FXCollections.observableArrayList(listaProductos));
         });
@@ -232,8 +243,12 @@ public class tabComprarProductos extends Tab {
                 textCantidad.setText(String.valueOf(cantidad));
                 tabladetallesComprarProductos.refresh();
             }
+            if(!tabladetallesComprarProductos.getItems().isEmpty()){
+                botonConfirmarCompra.setDisable(false);
+            }else {
+                botonConfirmarCompra.setDisable(true);
+            }
         });
-
 
         botoneliminar.setOnAction(event -> {
             if(!tabladetallesComprarProductos.getItems().isEmpty()){
@@ -251,6 +266,8 @@ public class tabComprarProductos extends Tab {
                     if(productoSeleccionado2.get(0).getCantidad() == 0){
                         listaProductosComprados.remove(indexProductoComprado2);
                         tabladetallesComprarProductos.setItems(FXCollections.observableArrayList(listaProductosComprados));
+                        textTotal.setText("0");
+                        textCantidad.setText("0");
                     }
                     tablaComprarProductos.refresh();
                     tabladetallesComprarProductos.refresh();
@@ -273,6 +290,27 @@ public class tabComprarProductos extends Tab {
                     textCantidad.setText(String.valueOf(cantidad));
                     tabladetallesComprarProductos.refresh();
                 }
+                if(!tabladetallesComprarProductos.getItems().isEmpty()){
+                    botonConfirmarCompra.setDisable(false);
+                }else {
+                    botonConfirmarCompra.setDisable(true);
+                    botoneliminar.setDisable(true);
+                }
+            }
+        });
+
+        tablaComprarProductos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                botonagregar.setDisable(false);
+                botoneliminar.setDisable(true);
+            }
+        });
+
+        tabladetallesComprarProductos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                botoneliminar.setDisable(false);
+            }else{
+                botoneliminar.setDisable(true);
             }
         });
 
@@ -280,7 +318,15 @@ public class tabComprarProductos extends Tab {
 
         botonConfirmarCompra.setOnAction(event -> {
             Compra compra = new Compra();
-            compra = construirCompra(compra);
+            try {
+                compra = construirCompra(compra);
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de conexión");
+                alert.setContentText("Ooops, algo salió mal al conectarse con la base de datos!");
+                alert.showAndWait();
+                return ;
+            }
             CompraDAO compraDAO = new CompraDAOImplement();
             try {
                 compraDAO.create(compra);
@@ -370,17 +416,13 @@ public class tabComprarProductos extends Tab {
         productoStock.setNombreProducto(producto.getNombreProducto());
         productoStock.setCantidad(1);
         productoStock.setTipo(producto.getTipo());
-        productoStock.setPrecio(producto.getPrecio());
+        productoStock.setPrecio(producto.getPrecio()+20);
         return  productoStock;
     }
 
-    public Compra construirCompra(Compra compra) {
+    public Compra construirCompra(Compra compra) throws Exception{
         CompraDAO compraDAO = new CompraDAOImplement();
-        try {
-            compra.setNoCompra(compraDAO.recuperarUltimaCompra());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        compra.setNoCompra(compraDAO.recuperarUltimaCompra());
         //compra.setUsuario(usuarioLogeado);
         compra.setCantidad(cantidad);
         compra.setFecha(fechaActual);

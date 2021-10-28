@@ -66,14 +66,22 @@ public class tabProductosStock extends Tab {
         columnaPrecio.setPrefWidth(200);
 
         ProductoStockDAO productoStockDAO = new ProductoStockDAOImplement();
-        try {
-            listaProductosStock=productoStockDAO.obtenerProductosStock();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        tablaProductosStock.getItems().addAll(FXCollections.observableArrayList(listaProductosStock));
+
+
+        areaProductosStock.setOnMouseEntered(event -> {
+            try {
+                listaProductosStock=productoStockDAO.obtenerProductosStock();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            tablaProductosStock.getItems().clear();
+            tablaProductosStock.getItems().addAll(FXCollections.observableArrayList(listaProductosStock));
+            listaProductosStock.clear();
+
+        });
 
         tablaProductosStock.getColumns().addAll(columnaNoProducto, columnaNombreProducto,columnaCantidad,columnaTipo,columnaPrecio);
+
 
         contenedorTablaFormulario.getChildren().addAll(tablaProductosStock);
         areaProductosStock.getChildren().addAll(contenedorTablaFormulario);

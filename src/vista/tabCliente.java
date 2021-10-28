@@ -63,6 +63,7 @@ public class tabCliente extends Tab {
         Label labelBuscar = new Label("Buscar:");
         TextField textBuscar = new TextField();
         Button botonBuscar = new Button("Buscar");
+        botonBuscar.setDisable(true);
 
         Label labelNombre = new Label("Nombre:");
         labelNombre.setLayoutX(20);
@@ -89,6 +90,17 @@ public class tabCliente extends Tab {
         Button botonRegistrarCliente = new Button("Registrar");
         botonRegistrarCliente.setLayoutX(820);
         botonRegistrarCliente.setLayoutY(145);
+
+        textBuscar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               if(textBuscar.getText().isEmpty()){
+                   botonBuscar.setDisable(true);
+               }else{
+                   botonBuscar.setDisable(false);
+               }
+            }
+        });
 
         botonRegistrarCliente.setOnAction(event -> {
             if (textNombre.getText().trim().length() > 0 && textEdad.getText().trim().length() > 0 && textDireccion.getText().trim().length() > 0) {
@@ -123,6 +135,16 @@ public class tabCliente extends Tab {
                                 String newValue) {
                 if (!newValue.matches("\\d*")) {
                     textEdad.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+
+        textBuscar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    textBuscar.setText(newValue.replaceAll("[^\\d]", ""));
                 }
             }
         });

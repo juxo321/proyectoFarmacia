@@ -92,7 +92,10 @@ public class tabVentasRealizadas extends Tab {
             try {
                 listaTabVentas = ventaDAO.listaVentasPorFecha(fechaBuscar);
             } catch (Exception e) {
-                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de conexión");
+                alert.setContentText("Ooops, algo salió mal al conectarse con la base de datos!");
+                alert.showAndWait();
             }
             tablaVentas.setItems(FXCollections.observableArrayList(listaTabVentas));
             datePickerFecha.getEditor().setDisable(false);
@@ -103,7 +106,10 @@ public class tabVentasRealizadas extends Tab {
             try {
                 listaTabVentas = ventaDAO.listaVentas();
             } catch (Exception e) {
-                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de conexión");
+                alert.setContentText("Ooops, algo salió mal al conectarse con la base de datos!");
+                alert.showAndWait();
             }
             tablaVentas.setItems(FXCollections.observableArrayList(listaTabVentas));
             datePickerFecha.getEditor().setDisable(true);

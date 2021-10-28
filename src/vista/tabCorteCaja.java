@@ -55,7 +55,7 @@ public class tabCorteCaja extends Tab{
         contenedorTablaFormulario.setPadding(new Insets(20,20,20,20));
 
         tablaCorteCaja = new TableView();
-        tablaCorteCaja.setPrefSize(650, 300);
+        tablaCorteCaja.setPrefSize(950, 300);
 
         ComboBox<String> comboBoxProvedor = new ComboBox<>();
         comboBoxProvedor.getItems().addAll("1","2","3");
@@ -140,15 +140,15 @@ public class tabCorteCaja extends Tab{
 
         TableColumn<Venta, Integer> columnaCantidad = new TableColumn<>("Cantidad");
         columnaCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        columnaCantidad.setPrefWidth(150);
+        columnaCantidad.setPrefWidth(250);
 
         TableColumn<Venta, Date> columnaFecha = new TableColumn<>("Fecha");
         columnaFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        columnaFecha.setPrefWidth(150);
+        columnaFecha.setPrefWidth(250);
 
         TableColumn<Venta, Double> columnaTotal = new TableColumn<>("Total");
         columnaTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
-        columnaTotal.setPrefWidth(150);
+        columnaTotal.setPrefWidth(210);
 
 
         tablaCorteCaja.getColumns().addAll(columnaNoCompra,columnaCantidad,columnaFecha,columnaTotal);
