@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import controlador.tabComprarProductosControlador;
 
 public class tabComprarProductos extends Tab {
 
@@ -48,13 +46,11 @@ public class tabComprarProductos extends Tab {
     int cantidad;
 
     ProductoDAO productoDAO = new ProductoDAOImplement();
-    tabComprarProductosControlador tabComprarProductosControlado;
     public tabComprarProductos(String text, AnchorPane areaComprarProductos, double ancho, double alto) {
         super(text, areaComprarProductos);
         this.areaComprarProductos = areaComprarProductos;
         this.ancho = ancho;
         this.alto = alto;
-        tabComprarProductosControlado = new tabComprarProductosControlador(this);
     }
 
     public void componentesTabComprarProductos(){

@@ -156,4 +156,52 @@ public class ProductoStockDAOImplement implements ProductoStockDAO{
             throw new Exception("Error en readAll Exception " + e.getMessage());
         }
     }
+
+    @Override
+    public boolean actualizarProductosStockEditado(ProductoStock productoStock) throws Exception {
+        Statement stm = null;
+        String sql = "update productostock set nombreProducto=?, cantidad=?, tipo=?, precio=?  where noProductoStock=?";
+
+        ConexionBD cc = new ConexionBD();
+        try (Connection con = cc.getConnection();) {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, productoStock.getNombreProducto());
+            stmt.setInt(2, productoStock.getCantidad());
+            stmt.setString(3, productoStock.getTipo());
+            stmt.setDouble(4, productoStock.getPrecio());
+            stmt.setInt(5, productoStock.getNoProductoStock());
+            if (stmt.executeUpdate()>0){
+                con.close();
+                return true;
+            }else{
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error en create SQLException " + e.getMessage());
+        } catch (Exception ex) {
+            throw new Exception("Error en create Exception " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public boolean borrarProductoStock(int noProductoStock) throws Exception {
+        Statement stm = null;
+        String sql = "DELETE FROM productostock where noProductoStock=?";
+
+        ConexionBD cc = new ConexionBD();
+        try (Connection con = cc.getConnection();) {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, noProductoStock);
+            if (stmt.executeUpdate()>0){
+                con.close();
+                return true;
+            }else{
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error en create SQLException " + e.getMessage());
+        } catch (Exception ex) {
+            throw new Exception("Error en create Exception " + ex.getMessage());
+        }
+    }
 }

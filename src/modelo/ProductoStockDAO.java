@@ -13,6 +13,10 @@ public interface ProductoStockDAO {
     public int cantidadProductoStock(ProductoStock productoStock) throws Exception;
 
     public List obtenerProductosStock() throws Exception;
+
+    public boolean actualizarProductosStockEditado(ProductoStock productoStock) throws Exception;
+
+    public boolean borrarProductoStock(int noProductoStock) throws  Exception;
 }
 
 
