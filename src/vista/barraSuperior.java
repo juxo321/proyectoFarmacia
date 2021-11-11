@@ -168,7 +168,6 @@ public class barraSuperior extends Pane {
             tablaUsuarios.getColumns().addAll(columnaNoUsuario, columnaNombre, columnaContrasena, columnaTipo);
             contenedorBotones1.getChildren().addAll(botonAgregarUsuario, botonModificarUsuario, botonEliminarUsuario);
 
-
             UsuarioDAO usuarioDAO = new UsuarioDAOImplement();
 
             try {
@@ -222,7 +221,6 @@ public class barraSuperior extends Pane {
 
                 Button btnAgregar = new Button("Agregar");
                 Button btnCancelar = new Button("Cancelar");
-
 
                 ArrayList<HBox> ObjetosEditar = new ArrayList<HBox>();
 
@@ -428,7 +426,7 @@ public class barraSuperior extends Pane {
             botonEliminarUsuario.setOnAction(event1 -> {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Coonfirmar");
-                alert.setContentText("¿Desea eliminar el producto?");
+                alert.setContentText("¿Desea eliminar el usuario?");
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK){

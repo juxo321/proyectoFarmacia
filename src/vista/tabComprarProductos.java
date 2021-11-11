@@ -170,7 +170,6 @@ public class tabComprarProductos extends Tab {
         //Modelo de selección para la primera tabla
         TableView.TableViewSelectionModel<Producto> modeloSeleccion = tablaComprarProductos.getSelectionModel();
         modeloSeleccion.setSelectionMode(SelectionMode.SINGLE);
-
         ObservableList<Producto> productoSeleccionado = modeloSeleccion.getSelectedItems();
 
 

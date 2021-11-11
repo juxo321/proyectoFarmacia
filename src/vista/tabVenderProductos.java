@@ -2,6 +2,7 @@ package vista;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -25,6 +26,7 @@ public class tabVenderProductos extends Tab{
     double alto;
 
     double totalVenta;
+    double totalDescuento;
     int cantidad;
 
     Calendar cal = new GregorianCalendar();
@@ -45,6 +47,11 @@ public class tabVenderProductos extends Tab{
 
     int contadorVenta=1;
     int contadorId2=1;
+
+    List<String> listaIdClientes = new ArrayList<>();
+
+    TextField textTotal;
+    TextField textTotalDescuento;
 
     public tabVenderProductos(String text, AnchorPane areaVenderProductos, double ancho, double alto) {
         super(text, areaVenderProductos);
@@ -68,33 +75,96 @@ public class tabVenderProductos extends Tab{
 
         Button botonagregar = new Button("Agregar");
         Button botonConfirmarVenta = new Button("Confirmar Venta");
+        Button botoneliminar = new Button("Eliminar");
 
-
-        //ventaActual=construirVenta(ventaActual);
-
+        botonagregar.setDisable(true);
+        botoneliminar.setDisable(true);
 
         Label labelfecha = new Label("Fecha:");
         labelfecha.setLayoutX(30);
-        labelfecha.setLayoutY(100);
+        labelfecha.setLayoutY(50);
         TextField textFecha = new TextField();
         textFecha.setLayoutX(100);
-        textFecha.setLayoutY(100);
+        textFecha.setLayoutY(50);
         textFecha.setEditable(false);
         textFecha.setText(fechaActual.toString());
         Label labelCantidad = new Label("Cantidad:");
         labelCantidad.setLayoutX(30);
-        labelCantidad.setLayoutY(150);
+        labelCantidad.setLayoutY(100);
         TextField textCantidad = new TextField();
         textCantidad.setLayoutX(100);
-        textCantidad.setLayoutY(150);
+        textCantidad.setLayoutY(100);
+        textCantidad.setEditable(false);
         Label labelTotal = new Label("Total:");
         labelTotal.setLayoutX(30);
-        labelTotal.setLayoutY(200);
-        TextField textTotal = new TextField();
+        labelTotal.setLayoutY(150);
+        textTotal = new TextField();
         textTotal.setLayoutX(100);
-        textTotal.setLayoutY(200);
+        textTotal.setLayoutY(150);
+        textTotal.setEditable(false);
+        Label labelIdCliente = new Label("ID cliente: ");
+        labelIdCliente.setLayoutX(30);
+        labelIdCliente.setLayoutY(200);
+        ComboBox<String> textIdCliente = new ComboBox<>();
+        textIdCliente.setTooltip(new Tooltip("Seleccione un ID de cliente para aplicar un descuento sobre el total"));
+        textIdCliente.setPrefWidth(70);
+        textIdCliente.setLayoutX(110);
+        textIdCliente.setLayoutY(200);
+        textIdCliente.setDisable(true);
+        ClienteDAO clienteDAO = new ClienteDAOImplement();
+        textIdCliente.setOnMouseClicked(event -> {
+            try {
+                listaIdClientes = clienteDAO.IdDeClientes();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            textIdCliente.getItems().clear();
+            textIdCliente.getItems().addAll(listaIdClientes);
+        });
+
+        textTotal.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue.isEmpty()){
+               if(newValue.equals("0")){
+                   textIdCliente.setDisable(true);
+               }else {
+                   textIdCliente.setDisable(false);
+                   if(!textTotalDescuento.isDisable()){
+                       totalDescuento = Double.parseDouble(textTotal.getText())* .90;
+                       textTotalDescuento.setText(String.valueOf(totalDescuento));
+                   }
+               }
+            }else {
+                textIdCliente.setDisable(false);
+            }
+        });
+
+        Label labelTotalDescuento = new Label("Total con descuento:");
+        labelTotalDescuento.setLayoutX(30);
+        labelTotalDescuento.setLayoutY(250);
+        textTotalDescuento = new TextField();
+        textTotalDescuento.setLayoutX(180);
+        textTotalDescuento.setLayoutY(250);
+        textTotalDescuento.setPrefWidth(150);
+        textTotalDescuento.setEditable(false);
+        textTotalDescuento.setDisable(true);
+
+        textIdCliente.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+            if(newValue != null){
+                textTotalDescuento.setDisable(false);
+                totalDescuento = Double.parseDouble(textTotal.getText())* .90;
+                textTotalDescuento.setText(String.valueOf(totalDescuento));
+                textTotal.setDisable(true);
+            }else {
+                textTotalDescuento.setDisable(true);
+                textTotal.setDisable(false);
+            }
+        });
+
+
         botonConfirmarVenta.setLayoutX(100);
-        botonConfirmarVenta.setLayoutY(300);
+        botonConfirmarVenta.setLayoutY(330);
+
+
 
 
         TableColumn<ProductoStock, Integer> columnaNoProducto = new TableColumn<>("No.Producto");
@@ -120,6 +190,7 @@ public class tabVenderProductos extends Tab{
         TableColumn<ProductoStock, Integer> columnaNoProvedor = new TableColumn<>("No.Provedor");
         columnaNoProvedor.setCellValueFactory(new PropertyValueFactory<>("noProvedor"));
         columnaNoProvedor.setPrefWidth(110);
+
 
 
         try {
@@ -162,6 +233,13 @@ public class tabVenderProductos extends Tab{
         ObservableList<ProductoStock> productoSeleccionado = modeloSeleccion.getSelectedItems();
         modeloSeleccion.setSelectionMode(SelectionMode.SINGLE);
 
+        //Modelo de selección para la segunda tabla
+
+        TableView.TableViewSelectionModel<ProductoVenta> modeloSeleccion2 = tabladetallesVenderProductos.getSelectionModel();
+        modeloSeleccion2.setSelectionMode(SelectionMode.SINGLE);
+
+        ObservableList<ProductoVenta> productoSeleccionado2 = modeloSeleccion2.getSelectedItems();
+
         botonagregar.setOnAction(event -> {
             productoVenta = construirProductoVenta(productoSeleccionado.get(0));
             indexproductoVenta= productoEnLista(productoVenta);
@@ -197,6 +275,69 @@ public class tabVenderProductos extends Tab{
                 textTotal.setText(String.valueOf(totalVenta));
                 textCantidad.setText(String.valueOf(cantidad));
                 tabladetallesVenderProductos.refresh();
+            }
+        });
+
+        botoneliminar.setOnAction(event -> {
+            if(!tabladetallesVenderProductos.getItems().isEmpty()){
+                int indexProductoComprado2 = productoEnLista(productoSeleccionado2.get(0));
+                if(productoSeleccionado2.get(0).getCantidad()>0){
+                    listaProductosVendidos.get(indexProductoComprado2).setCantidad(listaProductosVendidos.get(indexProductoComprado2).getCantidad()-1);
+                    for(ProductoStock producto : listaProductosStock){
+                        if(productoSeleccionado2.get(0).getNoProducto() == producto.getNoProductoStock()){
+                            producto.setCantidad(producto.getCantidad()+1);
+                        }
+                    }
+                    double precioProductoEliminar = precioProductoEliminar(productoSeleccionado2.get(0).getNoProducto());
+                    listaProductosVendidos.get(indexProductoComprado2).setTotal(listaProductosVendidos.get(indexProductoComprado2).getTotal()-precioProductoEliminar);
+                    if(productoSeleccionado2.get(0).getCantidad() == 0){
+                        listaProductosVendidos.remove(indexProductoComprado2);
+                        tabladetallesVenderProductos.setItems(FXCollections.observableArrayList(listaProductosVendidos));
+                        textTotal.setText("0");
+                        textCantidad.setText("0");
+                    }
+                    tablaVenderProductos.refresh();
+                    tabladetallesVenderProductos.refresh();
+                }else{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Cantidad insuficiente");
+                    alert.setHeaderText(null);
+                    alert.setContentText("No hay suficientes productos para eliminar");
+                    alert.showAndWait();
+                }
+
+                totalVenta=0;
+                cantidad =0;
+
+
+                for (ProductoVenta producto : listaProductosVendidos){
+                    totalVenta+=producto.getTotal();
+                    cantidad+=producto.getCantidad();
+                    textTotal.setText(String.valueOf(totalVenta));
+                    textCantidad.setText(String.valueOf(cantidad));
+                    tabladetallesVenderProductos.refresh();
+                }
+                if(!tabladetallesVenderProductos.getItems().isEmpty()){
+                    botonConfirmarVenta.setDisable(false);
+                }else {
+                    botonConfirmarVenta.setDisable(true);
+                    botoneliminar.setDisable(true);
+                }
+            }
+        });
+
+        tablaVenderProductos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                botonagregar.setDisable(false);
+                botoneliminar.setDisable(true);
+            }
+        });
+
+        tabladetallesVenderProductos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                botoneliminar.setDisable(false);
+            }else{
+                botoneliminar.setDisable(true);
             }
         });
 
@@ -237,11 +378,23 @@ public class tabVenderProductos extends Tab{
             tabladetallesVenderProductos.setItems(FXCollections.observableArrayList(listaProductosVendidos));
             textCantidad.setText("0");
             textTotal.setText("0");
+            textTotalDescuento.setText("0");
         });
 
-        areaDetallesVenta.getChildren().addAll(labelfecha, textFecha, labelCantidad, textCantidad, labelTotal, textTotal, botonConfirmarVenta);
+        areaVenderProductos.setOnMouseEntered(event -> {
+            try {
+                listaProductosStock = productoStockDAO.obtenerProductosStock();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            tablaVenderProductos.getItems().clear();
+            tablaVenderProductos.setItems(FXCollections.observableArrayList(listaProductosStock));
+            listaProductosStock.clear();
+        });
+
+        areaDetallesVenta.getChildren().addAll(labelfecha, textFecha, labelCantidad, textCantidad, labelTotal, textTotal, labelIdCliente, textIdCliente, labelTotalDescuento,textTotalDescuento,  botonConfirmarVenta);
         contenedorDetallesVenta.getChildren().addAll(tabladetallesVenderProductos, areaDetallesVenta);
-        contenedorBotonesAgregarCancelar.getChildren().addAll( botonagregar);
+        contenedorBotonesAgregarCancelar.getChildren().addAll( botoneliminar, botonagregar);
         contenedorTablaFormulario.getChildren().addAll(tablaVenderProductos, contenedorBotonesAgregarCancelar, contenedorDetallesVenta);
         areaVenderProductos.getChildren().addAll(contenedorTablaFormulario);
 
@@ -256,6 +409,15 @@ public class tabVenderProductos extends Tab{
         return productoVenta;
     }
 
+    private double precioProductoEliminar(int noProducto) {
+        for(ProductoStock producto : listaProductosStock){
+            if(noProducto ==  producto.getNoProductoStock()){
+                return producto.getPrecio();
+            }
+        }
+        return -1;
+    }
+
     public Venta construirVenta(Venta venta) {
         VentaDAO ventaDAO = new VentaDAOImplement();
         try {
@@ -266,7 +428,11 @@ public class tabVenderProductos extends Tab{
         //venta.setUsuario(usuarioLogeado);
         venta.setCantidad(cantidad);
         venta.setFecha(fechaActual);
-        venta.setTotal(totalVenta);
+        if(textTotalDescuento.isDisable()){
+            venta.setTotal(totalVenta);
+        }else {
+            venta.setTotal(totalDescuento);
+        }
         return venta;
     }
 
