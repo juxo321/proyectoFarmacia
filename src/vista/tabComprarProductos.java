@@ -13,10 +13,7 @@ import javafx.scene.text.Font;
 import modelo.*;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 public class tabComprarProductos extends Tab {
 
@@ -312,68 +309,78 @@ public class tabComprarProductos extends Tab {
 
 
         botonConfirmarCompra.setOnAction(event -> {
-            Compra compra = new Compra();
-            try {
-                compra = construirCompra(compra);
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error de conexión");
-                alert.setContentText("Ooops, algo salió mal al conectarse con la base de datos!");
-                alert.showAndWait();
-                return ;
-            }
-            CompraDAO compraDAO = new CompraDAOImplement();
-            try {
-                compraDAO.create(compra);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmar compra");
+            alert.setContentText("¿Desea realizar la compra?");
 
-            compra.setProductosCompra(listaProductosComprados);
-            for (ProductoCompra productoComprado: listaProductosComprados){
-                productoComprado.setCompra(compra);
-            }
-
-            for (ProductoCompra productoComprado: listaProductosComprados){
-                System.out.println(productoComprado.toString());
-            }
-
-            for (Producto listaProducto : listaProductos) {
-                ProductoDAO productoDAO= new ProductoDAOImplement();
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                Compra compra = new Compra();
                 try {
-                    productoDAO.actualizarProductos(listaProducto);
+                    compra = construirCompra(compra);
+                } catch (Exception e) {
+                    Alert alert1 = new Alert(Alert.AlertType.ERROR);
+                    alert1.setTitle("Error de conexión");
+                    alert1.setContentText("Ooops, algo salió mal al conectarse con la base de datos!");
+                    alert1.showAndWait();
+                    return ;
+                }
+                CompraDAO compraDAO = new CompraDAOImplement();
+                try {
+                    compraDAO.create(compra);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
 
-            for(ProductoCompra producto : listaProductosComprados){
-                ProductoCompraDAO productoCompraDAO = new ProductoCompraDAOImplement();
-                try {
-                    productoCompraDAO.actualizarProductosComprados(producto);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                compra.setProductosCompra(listaProductosComprados);
+                for (ProductoCompra productoComprado: listaProductosComprados){
+                    productoComprado.setCompra(compra);
                 }
-            }
 
-            //usuarioLogeado.setCompras(listaCompras);
-
-
-            for(ProductoStock productoStock : listaProductosStock){
-                ProductoStockDAO productoStockDAO = new ProductoStockDAOImplement();
-                try {
-                    System.out.println(productoStock.toString());
-                    productoStockDAO.actualizarProductosStock(productoStock);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                for (ProductoCompra productoComprado: listaProductosComprados){
+                    System.out.println(productoComprado.toString());
                 }
+
+                for (Producto listaProducto : listaProductos) {
+                    ProductoDAO productoDAO= new ProductoDAOImplement();
+                    try {
+                        productoDAO.actualizarProductos(listaProducto);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                for(ProductoCompra producto : listaProductosComprados){
+                    ProductoCompraDAO productoCompraDAO = new ProductoCompraDAOImplement();
+                    try {
+                        productoCompraDAO.actualizarProductosComprados(producto);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //usuarioLogeado.setCompras(listaCompras);
+
+
+                for(ProductoStock productoStock : listaProductosStock){
+                    ProductoStockDAO productoStockDAO = new ProductoStockDAOImplement();
+                    try {
+                        System.out.println(productoStock.toString());
+                        productoStockDAO.actualizarProductosStock(productoStock);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("******************************************************");
+                listaProductosComprados.clear();
+                listaProductosStock.clear();
+                tabladetallesComprarProductos.setItems(FXCollections.observableArrayList(listaProductosComprados));
+                textCantidad.setText("0");
+                textTotal.setText("0");
+            } else {
+
             }
-            System.out.println("******************************************************");
-            listaProductosComprados.clear();
-            listaProductosStock.clear();
-            tabladetallesComprarProductos.setItems(FXCollections.observableArrayList(listaProductosComprados));
-            textCantidad.setText("0");
-            textTotal.setText("0");
+
         });
 
         areaDetallesCompra.getChildren().addAll(labelfecha, textFecha, labelCantidad, textCantidad, labelTotal, textTotal, botonConfirmarCompra);

@@ -67,12 +67,19 @@ public class tabCorteCaja extends Tab{
         corteCaja.setAlignment(Pos.CENTER);
 
         VentaDAO ventaDAO = new VentaDAOImplement();
-        try {
-            listaCorteCaja = ventaDAO.listaVentas();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        tablaCorteCaja.setItems(FXCollections.observableArrayList(listaCorteCaja));
+
+        areaCorteCaja.setOnMouseEntered(event -> {
+            try {
+                listaCorteCaja = ventaDAO.listaVentas();
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error ");
+                alert.setContentText("Ooops, error al obetenr los datos!");
+                alert.showAndWait();
+            }
+            tablaCorteCaja.setItems(FXCollections.observableArrayList(listaCorteCaja));
+        });
+
 
         corteCaja.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

@@ -92,7 +92,10 @@ public class tabProductosStock extends Tab {
             try {
                 listaProductosStock=productoStockDAO.obtenerProductosStock();
             } catch (Exception e) {
-                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error ");
+                alert.setContentText("Ooops, error al obetenr los datos!");
+                alert.showAndWait();
             }
             tablaProductosStock.getItems().clear();
             tablaProductosStock.getItems().addAll(FXCollections.observableArrayList(listaProductosStock));

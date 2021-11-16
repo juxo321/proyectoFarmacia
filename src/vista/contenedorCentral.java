@@ -68,9 +68,10 @@ public class contenedorCentral extends SplitPane {
     AnchorPane areaProductosStock = new AnchorPane();
     AnchorPane areaCorteCaja = new AnchorPane();
 
-    contenedorCentral() {
-        //this.usuarioLogeado = usuarioLogeado;
+    String tipo;
 
+    contenedorCentral(String tipo) {
+        this.tipo = tipo;
         componentesContenedorIzquierdo();
         componentesContenedorDerecho();
 
@@ -180,6 +181,15 @@ public class contenedorCentral extends SplitPane {
         botonCorteCaja.setOnMouseExited(event -> {
             botonCorteCaja.setStyle("-fx-background-color: #" + "aad8d3");
         });
+
+        if(tipo.equals("empleado")){
+            botonComprarProductos.setDisable(true);
+            botonCompras.setDisable(true);
+        }else {
+            botonVenderProductos.setDisable(true);
+            botonCorteCaja.setDisable(true);
+
+        }
 
         barraHerramientas.setOrientation(Orientation.VERTICAL);
         barraHerramientas.setStyle("-fx-background-color: #" + "aad8d3");

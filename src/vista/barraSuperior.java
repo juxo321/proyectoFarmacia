@@ -38,7 +38,7 @@ public class barraSuperior extends Pane {
 
     List<Usuario> listaUsuarios = new ArrayList<>();
 
-    barraSuperior() {
+    barraSuperior(String tipo) {
         this.setPrefSize(1200, 150);
         this.setStyle("-fx-background-color: #" + "00adb5");
 
@@ -111,6 +111,9 @@ public class barraSuperior extends Pane {
         botonModificarUsuario.setDisable(true);
         botonEliminarUsuario.setDisable(true);
 
+        if(tipo.equals("empleado")){
+            botonAdministrarUsuarios.setDisable(true);
+        }
 
         botonSalir.setOnAction(event -> {
             Stage stage = (Stage) botonSalir.getScene().getWindow();

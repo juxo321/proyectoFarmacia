@@ -13,7 +13,7 @@ public interface UsuarioDAO {
 
     public boolean delete(Usuario usuario) throws Exception;
 
-    boolean verificarDatos(String usuario, String contrasena) throws Exception;
+    String verificarDatos(String usuario, String contrasena) throws Exception;
 
     public boolean agregarUsuario(Usuario usuario) throws Exception;
 

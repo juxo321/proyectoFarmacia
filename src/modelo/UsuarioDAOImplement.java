@@ -56,7 +56,7 @@ public class UsuarioDAOImplement implements UsuarioDAO{
     }
 
     @Override
-    public boolean verificarDatos(String usuario, String contrasena) throws Exception {
+        public String verificarDatos(String usuario, String contrasena) throws Exception {
         Statement stm;
         ResultSet usuarios;
         String sql = "select * from usuario;";
@@ -67,10 +67,10 @@ public class UsuarioDAOImplement implements UsuarioDAO{
             usuarios = stm.executeQuery(sql);
             while (usuarios.next()){
                 if(usuarios.getString("nombre").equals(usuario) && usuarios.getInt("contrasena") == Integer.parseInt(contrasena)){
-                    return true;
+                    return usuarios.getString("tipo");
                 }
             }
-            return  false;
+            return  null;
         }catch (SQLException e) {
             throw new Exception("Error en readAll SQLException " + e.getMessage());
         } catch (Exception e) {

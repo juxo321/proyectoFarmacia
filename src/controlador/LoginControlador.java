@@ -7,13 +7,13 @@ import modelo.UsuarioDAOImplement;
 import vista.Login;
 
 public class LoginControlador {
-
+    UsuarioDAO usuarioDAO = new UsuarioDAOImplement();
+    String tipo = null;
     public void verificarDatos(Login login) throws Exception {
-        UsuarioDAO usuarioDAO = new UsuarioDAOImplement();
         if(login.getUsuario().trim().length() != 0 || login.getContrasena().trim().length() !=0) {
-            if (usuarioDAO.verificarDatos(login.getUsuario(), login.getContrasena()) == true) {
-                //Usuario usuarioLogueado = new Usuario();
-                login.crearStagePrincipal();
+            tipo =usuarioDAO.verificarDatos(login.getUsuario(), login.getContrasena());
+            if (tipo != null) {
+                login.crearStagePrincipal(tipo);
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Datos incorrectos");

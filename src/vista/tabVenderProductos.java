@@ -14,10 +14,7 @@ import javafx.scene.layout.VBox;
 import modelo.*;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 public class tabVenderProductos extends Tab{
 
@@ -295,6 +292,7 @@ public class tabVenderProductos extends Tab{
                         tabladetallesVenderProductos.setItems(FXCollections.observableArrayList(listaProductosVendidos));
                         textTotal.setText("0");
                         textCantidad.setText("0");
+                        textTotalDescuento.setText("0");
                     }
                     tablaVenderProductos.refresh();
                     tabladetallesVenderProductos.refresh();
@@ -342,50 +340,61 @@ public class tabVenderProductos extends Tab{
         });
 
         botonConfirmarVenta.setOnAction(event -> {
-            Venta venta = new Venta();
-            venta = construirVenta(venta);
-            VentaDAO ventaDAO = new VentaDAOImplement();
-            try {
-                ventaDAO.create(venta);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            venta.setProductosVenta(listaProductosVendidos);
-
-            for (ProductoVenta productoVendido: listaProductosVendidos){
-                productoVendido.setVenta(venta);
-            }
-
-            for (ProductoStock producto : listaProductosStock) {
-                ProductoStockDAO productoStockDAO = new ProductoStockDAOImplement();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confir venta");
+            alert.setContentText("¿Desea realizar esta venta?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                Venta venta = new Venta();
+                venta = construirVenta(venta);
+                VentaDAO ventaDAO = new VentaDAOImplement();
                 try {
-                    productoStockDAO.actualizarProductosStockVenta(producto);
+                    ventaDAO.create(venta);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
 
-            for(ProductoVenta producto : listaProductosVendidos){
-                ProductoVentaDAO productoVentaDAO = new ProductoVentaDAOImplement();
-                try {
-                    productoVentaDAO.actualizarProductosVendidos(producto);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                venta.setProductosVenta(listaProductosVendidos);
+
+                for (ProductoVenta productoVendido: listaProductosVendidos){
+                    productoVendido.setVenta(venta);
                 }
+
+                for (ProductoStock producto : listaProductosStock) {
+                    ProductoStockDAO productoStockDAO = new ProductoStockDAOImplement();
+                    try {
+                        productoStockDAO.actualizarProductosStockVenta(producto);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                for(ProductoVenta producto : listaProductosVendidos){
+                    ProductoVentaDAO productoVentaDAO = new ProductoVentaDAOImplement();
+                    try {
+                        productoVentaDAO.actualizarProductosVendidos(producto);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                listaProductosVendidos.clear();
+                tabladetallesVenderProductos.setItems(FXCollections.observableArrayList(listaProductosVendidos));
+                textCantidad.setText("0");
+                textTotal.setText("0");
+                textTotalDescuento.setText("0");
+            } else {
+
             }
-            listaProductosVendidos.clear();
-            tabladetallesVenderProductos.setItems(FXCollections.observableArrayList(listaProductosVendidos));
-            textCantidad.setText("0");
-            textTotal.setText("0");
-            textTotalDescuento.setText("0");
         });
 
         areaVenderProductos.setOnMouseEntered(event -> {
             try {
                 listaProductosStock = productoStockDAO.obtenerProductosStock();
             } catch (Exception e) {
-                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error ");
+                alert.setContentText("Ooops, error al obetenr los datos!");
+                alert.showAndWait();
             }
             tablaVenderProductos.getItems().clear();
             tablaVenderProductos.setItems(FXCollections.observableArrayList(listaProductosStock));

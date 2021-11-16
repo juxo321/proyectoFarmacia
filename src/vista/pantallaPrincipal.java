@@ -8,9 +8,9 @@ import javafx.scene.layout.VBox;
 //import models.UsuarioEntity;
 
 public class pantallaPrincipal extends VBox {
-    pantallaPrincipal(){
-        barraSuperior barraSuperior = new barraSuperior();
-        contenedorCentral contenedorCentral = new contenedorCentral();
+    pantallaPrincipal(String tipo){
+        barraSuperior barraSuperior = new barraSuperior(tipo);
+        contenedorCentral contenedorCentral = new contenedorCentral(tipo);
         this.setPadding(new Insets(10,10,10,10));
         this.getChildren().addAll(barraSuperior,contenedorCentral);
     }

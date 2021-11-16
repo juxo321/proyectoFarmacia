@@ -71,17 +71,15 @@ public class Login  extends GridPane {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error al conectarse");
                 alert.setHeaderText(null);
-                alert.setContentText("Error: " + exception.getMessage());
-
+                alert.setContentText("Error al conectarse con la base de datos");
                 alert.showAndWait();
             }
-
         });
     }
 
-    public void crearStagePrincipal(){
+    public void crearStagePrincipal(String tipo){
 
-        pantallaPrincipal pantallaPrincipal = new pantallaPrincipal();
+        pantallaPrincipal pantallaPrincipal = new pantallaPrincipal(tipo);
 
         Stage stagePrincipal = new Stage();
         stagePrincipal.setScene(new Scene(pantallaPrincipal, 1200, 950));
